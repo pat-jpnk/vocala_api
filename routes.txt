@@ -1,0 +1,18 @@
+
+
+POST /users
+GET /users                           !!!!!
+
+GET /users/<username>
+DELETE /users/<username>
+PUT /users/<username>                !!!!!
+
+GET /users/<username>/sets
+POST /users/<username>/sets
+
+GET /users/<username>/sets/<id>
+DELETE /users/<username>/sets/<id>
+PUT /users/<username>/sets/<id>       !!!!!
+
+GET /users/<username>/sets/<id>/practice
+

@@ -130,8 +130,8 @@ class Set(Resource):
     )
 
     @jwt_required
-    def get(self, name, set_id):
-        user_id = UserModel.find_id_by_name(name)
+    def get(self, username, set_id):
+        user_id = UserModel.find_id_by_name(username)
 
         if user_id:
             set = SetModel.find_by_id(set_id)
@@ -143,8 +143,8 @@ class Set(Resource):
             return {"message": "User does not exist"}, 404
 
     @jwt_required
-    def delete(self, name, set_id):
-        user_id = UserModel.find_id_by_name(name)
+    def delete(self, username, set_id):
+        user_id = UserModel.find_id_by_name(username)
 
         if user_id:
             set = SetModel.find_by_id(set_id)

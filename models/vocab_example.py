@@ -7,7 +7,10 @@ class VocabExampleModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     example = db.Column(db.String)
-    vocab_id = db.Column(db.Integer)
+    vocab_id = db.Column(db.Integer, db.ForeignKey("vc_vocabularies.id"))
+
+    vocab = db.relationship("VocabModel", back_populates="vc_usage_examples")
+
     
 
     def __init__(self, id, example, vocab_id):

@@ -33,8 +33,8 @@ jwt = JWT(app, authenticate, identity)
 
 api.add_resource(Users, '/users')
 api.add_resource(User, '/users/<string:name>')
-api.add_resource(Sets, '/users/<string:name>/sets')
-api.add_resource(Set, '/users/<string:name>/sets/<string:id>')
+api.add_resource(Sets, '/users/<string:username>/sets')
+api.add_resource(Set, '/users/<string:username>/sets/<string:id>')
 api.add_resource(Practice, '/users/<string:name>/sets/<string:id>/practice')
 
 
