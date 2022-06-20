@@ -10,14 +10,14 @@ class VocabModel(db.Model):
     foreign = db.Column(db.String(50))
     next_date = db.Column(db.Date)
     level = db.Column(db.Integer)
-    description = db.Column(db.String(50))
+    description = db.Column(db.String(50), nullable=True)
     
     def __init__(self, native, foreign, set_id, next_date, description):
-        self.native = native,
-        self.foreign = foreign,
-        self.set_id = set_id,
-        self.level = 1,              # TODO: set sensible
-        self.next_date = "",        # TODO: fix
+        self.native = native
+        self.foreign = foreign
+        self.set_id = set_id
+        self.level = 1              # TODO: set sensible
+        self.next_date = ""        # TODO: fix
         self.description = description
 
     def json(self):

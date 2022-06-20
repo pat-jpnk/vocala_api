@@ -1,4 +1,5 @@
 from db import db
+from models.set import SetModel
 
 # TODO: add all relationships
 
@@ -10,7 +11,8 @@ class UserModel(db.Model):
     username = db.Column(db.String(80))                      # change to sensible value
     password = db.Column(db.String(80))
     email = db.Column(db.String(80))
-    sets = db.relationship("vc_sets")
+    
+    sets = db.relationship("SetModel", order_by=SetModel.id, back_populates="vc_users")
 
 
     def __init__(self, username, password, email):

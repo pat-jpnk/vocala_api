@@ -90,10 +90,13 @@ class Sets(Resource):
     )
 
     def get(self, username):
+        user_id = UserModel.find_id_by_name(username)
 
+        if user_id:
+            return {'sets': list(map(lambda x: x.json(), SetModel.find_by_user_id(user_id)))} 
 
-
-        return {'sets': list(map(lambda x: x.json(), SetModel.find_by_username(username)))}
+        else: 
+            return {"message": "User does not exist"}, 404
 
     @jwt_required
     def post(self, username):
@@ -134,6 +137,22 @@ class Set(Resource):
             set = SetModel.find_by_id(set_id)
             if set:
                 return set.json()
+            else:
+                return {"message": "Set does not exist"}, 404
+        else:
+            return {"message": "User does not exist"}, 404
+
+    @jwt_required
+    def delete(self, name, set_id):
+        user_id = UserModel.find_id_by_name(name)
+
+        if user_id:
+            set = SetModel.find_by_id(set_id)
+            if set:
+                try:
+                    set.delete()
+                except:
+                    return {"message": "Internal error during deletion"}, 500
             else:
                 return {"message": "Set does not exist"}, 404
         else:
