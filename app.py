@@ -7,6 +7,7 @@ from flask_restful import Api
 from flask_jwt import JWT, jwt_required 
 from db import db
 
+from security import authenticate, identity
 from resources.user import User, Users, Sets, Set, Practice
 
 
@@ -24,6 +25,9 @@ api = Api(app)
 def create_tables():
     db.create_all()
 '''
+
+jwt = JWT(app, authenticate, identity)
+
 
 # ------ API resources ------
 
