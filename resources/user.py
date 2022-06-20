@@ -1,35 +1,9 @@
 import string
+from telnetlib import SE
 from flask_restful import Resource, reqparse
 from models.user import UserModel
 from models.set import SetModel
 from flask_jwt import jwt_required
-
-# /users/<name>
-
-class User(Resource):
-
-    def get(self, username):
-        user = UserModel.find_by_username(username)
-        if user:
-            return {"user": username}  
-        else:
-            return {"message": 'User not found'}, 404
-
-
-    @jwt_required
-    def delete(self, username):
-        if not UserModel.find_by_username(username):
-            return {"message": "User does not exists"}
-        else:
-            user = UserModel.find_by_username(username)   # duplicate
-
-            try:
-                user.delete()
-            except:
-                return {"message": "Internal error during deletion"}, 500
-
-        return user.json()
-
 
 # /users
 
@@ -55,13 +29,20 @@ class Users(Resource):
                         help="required field"       
     )
 
-    
+
+    @jwt_required
+    def get(self):
+        return {"users": [x.json() for x in UserModel.find_all()]}
+
     def post(self):
-        if UserModel.find_by_username(data['username']):
-            return {"message": "A User with name '{}' already exists".format(name)}, 400
-        
         data = User.parser.parse_args()
+
+        if UserModel.find_by_username(data['username']):
+            return {"message": "A User with name '{}' already exists".format(data['username'])}, 400
+
         user = UserModel(data['username'], data['password'],data['email'])
+
+        # check for duplicate email
 
         try:
             user.save()
@@ -70,6 +51,35 @@ class Users(Resource):
         
         return user.json(), 201
 
+# /users/<name>
+
+class User(Resource):
+
+    def get(self, username):
+        user = UserModel.find_by_username(username)
+        if user:
+            return user.json()
+        else:
+            return {"message": 'User not found'}, 404
+
+
+    @jwt_required
+    def delete(self, username):
+        if not UserModel.find_by_username(username):
+            return {"message": "User does not exists"}
+        else:
+            user = UserModel.find_by_username(username)   # duplicate
+
+            try:
+                user.delete()
+            except:
+                return {"message": "Internal error during deletion"}, 500
+
+        return user.json()
+
+    @jwt_required
+    def put(self. username):
+        pass                   # TODO: implement
 
 # /users/<name>/sets
 
@@ -93,7 +103,7 @@ class Sets(Resource):
         user_id = UserModel.find_id_by_name(username)
 
         if user_id:
-            return {'sets': list(map(lambda x: x.json(), SetModel.find_by_user_id(user_id)))} 
+            return {"sets": [x.json() for x in SetModel.find_by_user_id(user_id)]} 
 
         else: 
             return {"message": "User does not exist"}, 404
@@ -141,6 +151,10 @@ class Set(Resource):
                 return {"message": "Set does not exist"}, 404
         else:
             return {"message": "User does not exist"}, 404
+
+    @jwt_required
+    def put(self, username, set_id):
+        pass                                # TODO: implement
 
     @jwt_required
     def delete(self, username, set_id):

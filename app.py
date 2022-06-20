@@ -14,7 +14,7 @@ from resources.user import User, Users, Sets, Set, Practice
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres:://aws-example.com'       # TODO: change
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False    # turn off flask sqlalchemy modification tracker, leave sqlalchemy modification tracker on
-app.config['PROPAGATE_EXCEPTIONS'] = True
+app.config['PROPAGATE_EXCEPTIONS'] = True # provide  better error codes from flask extensions
 
 app.secret_key = "ABCDEFG"
 api = Api(app)
