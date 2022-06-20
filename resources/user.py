@@ -8,20 +8,20 @@ from flask_jwt import jwt_required
 
 class User(Resource):
 
-    def get(self, name):
-        user = UserModel.find_by_username(name)
+    def get(self, username):
+        user = UserModel.find_by_username(username)
         if user:
-            return {"user": name}  
+            return {"user": username}  
         else:
             return {"message": 'User not found'}, 404
 
 
     @jwt_required
-    def delete(self, name):
-        if not UserModel.find_by_username(name):
+    def delete(self, username):
+        if not UserModel.find_by_username(username):
             return {"message": "User does not exists"}
         else:
-            user = UserModel.find_by_username(name)   # duplicate
+            user = UserModel.find_by_username(username)   # duplicate
 
             try:
                 user.delete()
