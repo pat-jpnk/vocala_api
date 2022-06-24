@@ -5,21 +5,21 @@ class VocabModel(db.Model):
     __tablename__ = 'vc_vocabularies'
 
     id = db.Column(db.Integer, primary_key=True)
-    set_id = db.Column(db.Integer)
+    set_id = db.Column(db.Integer, db.ForeignKey('vc_sets.id'))
     native = db.Column(db.String(50))                   # change to sensible value
     foreign = db.Column(db.String(50))
     next_date = db.Column(db.Date)
     level = db.Column(db.Integer)
     description = db.Column(db.String(50), nullable=True)
     
-    examples = db.relationship("VocabModel", back_populates="vc_vocabularies")
+    examples = db.relationship("VocabExampleModel", back_populates="vc_vocabularies")
 
-    def __init__(self, native, foreign, set_id, next_date, description):
+    def __init__(self, native, foreign, set_id, description):
         self.native = native
         self.foreign = foreign
         self.set_id = set_id
-        self.level = 1              # TODO: set sensible
-        self.next_date = ""        # TODO: fix
+        self.level = 1
+        self.next_date = db.current_date()     # tell sql to let DB engine calculate DATE value, removing proccess from application level
         self.description = description
 
     def json(self):

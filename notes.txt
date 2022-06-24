@@ -1,0 +1,1 @@
+upgrade flask-jwt-extended notes ('https://flask-jwt-extended.readthedocs.io/en/stable/v4_upgrade_guide/')

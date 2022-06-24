@@ -3,10 +3,14 @@ import string
 from flask_restful import Resource, reqparse
 from models.user import UserModel
 from models.set import SetModel
-from flask_jwt_extended import  create_access_token, create_refresh_token, jwt_required, get_jwt_claims, jwt_optional, get_jwt_identity, jwt_refresh_token_required, fresh_jwt_required, get_raw_jwt
-
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    get_jwt_identity,
+    jwt_required,
+    get_jwt
+)
 from hmac import compare_digest
-
 from blocklist import BLOCKLIST
 
 
@@ -22,7 +26,7 @@ jwt flow:
 class UserLogout(Resource):
     @jwt_required
     def post(self):
-        jti = get_raw_jwt()['jti']              # jwt id = jti
+        jti = get_jwt()['jti']              # jwt id = jti
         BLOCKLIST.add(jti)
         return {"message": "logged out"}, 200
 
@@ -52,7 +56,7 @@ class UserLogin(Resource):
         user = UserModel.find_by_username(data['username'])
         # check password -> create access token
         if user and compare_digest(user.password,data['password']):
-            access_token = create_access_token(identity=user.id, fresh=True)
+            access_token = create_access_token(sub=user.id, fresh=True)
             refresh_token = create_refresh_token(user.id)
             return {"access_token": access_token, "refresh_token": refresh_token}
         else:
@@ -88,8 +92,8 @@ class Users(Resource):
     def get(self):
         return {"users": [x.json() for x in UserModel.find_all()]}
 
-    @fresh_jwt_required
-    def post(self):
+    @jwt_required(fresh=True)
+    def delete(self):
         pass            # TODO: implement
 
     def post(self):
@@ -233,6 +237,29 @@ class Set(Resource):
             return {"message": "User does not exist"}, 404
 
 
+
+# /users/<name>/sets/<string:id/vocab
+
+# paginate, filter, sort
+
+class SetVocab(Resource):
+    @jwt_required
+    def get(self, username, set_id):
+        user_id = UserModel.find_id_by_name(username)
+
+        if user_id:
+            set = SetModel.find_by_id(set_id)
+            if set:
+                return {"vocab": [x.json() for x in SetModel.find_by_user_id(user_id).vocab]}
+            else:
+                return {"message": "Set does not exist"}, 404
+        else:
+            return {"message": "User does not exist"}, 404
+
+
+
+
+
 # /users/<name>/sets/<string:id/practice>
 
 class Practice(Resource):
@@ -240,12 +267,23 @@ class Practice(Resource):
     def get(self, id):
         pass                          # TODO: implement
 
+        # return X vocabularies in set for which next_date <= today
+    
+    @jwt_required
+    def post(self, id):
+        # receive practice outcome (vocabulary) (success | failure) (small mistake | big mistake)
+        # process outcome, change level and next_date values
+        # validate input
+        pass
+
+
+
 # /admin
 
 class Admin(Resource):
     @jwt_required
     def get(self):
-        claims = get_jwt_claims()
+        claims = get_jwt()
         if not claims['is_admin']:
             return {"message": "Not allowed"}, 401
         return {"data": 13454}
@@ -253,8 +291,8 @@ class Admin(Resource):
 # return error when no token is provided 
 
 class RefreshToken(Resource):
-    @jwt_refresh_token_required
+    @jwt_required(refresh=True)
     def post(self):
         user = get_jwt_identity()
-        new_token = create_access_token(identity=user, fresh=False)
+        new_token = create_access_token(sub=user, fresh=False)
         return {'access_token': new_token}, 200

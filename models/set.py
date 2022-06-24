@@ -9,6 +9,8 @@ class SetModel(db.Model):
     setname = db.Column(db.String(50))                   # change to sensible value
 
     user = db.relationship("UserModel", back_populates="vc_sets")
+    vocab = db.relationship("VocabModel", back_populates="vc_sets")
+
 
     def __init__(self, setname, user_id):
         self.setname = setname
