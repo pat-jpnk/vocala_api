@@ -8,7 +8,6 @@ class SetModel(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("vc_users.id"))
     setname = db.Column(db.String(50))                   # change to sensible value
 
-    #user = db.relationship("UserModel", back_populates="vc_sets")
     vocab = db.relationship("VocabModel", backref="set")
 
 
@@ -39,3 +38,8 @@ class SetModel(db.Model):
     @classmethod
     def find_by_id(cls, set_id):
         return cls.query.filter_by(id=set_id).first(); # add crockford32 ID         ## add identifier field to SET ? 
+
+    @classmethod
+    def user_has_set(cls, set_id, user_id):
+        set = cls.query.filter_by(id = set_id).first()
+        return set.user_id == user_id

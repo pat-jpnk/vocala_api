@@ -1,7 +1,6 @@
 '''
 Vocala api 0.1
 '''
-
 # TODO: decide where to require fresh token 
 from os import environ
 
@@ -15,10 +14,12 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from db import db
 from blocklist import BLOCKLIST
-
 from dotenv import load_dotenv
 
-from resources.user import RefreshToken, SetVocab, User, UserLogin, UserLogout, Users, Sets, Set, Practice
+from resources.user import RefreshToken, User, UserLogin, UserLogout, Users, Admin
+from resources.practice import Practice
+from resources.set import Sets, Set
+from resources.vocab import SetVocab
 
 
 app = Flask(__name__)
@@ -30,7 +31,7 @@ app.config['PROPAGATE_EXCEPTIONS'] = True # provide  better error codes from fla
 app.config['JWT_BLACKLIST_ENABLE'] = True
 app.config['JWT_BLOCKLIST_TOKEN_CHECKS'] = ['access','refresh']
 
-app.secret_key = environ.get("SECRET_KEY")   # app.config['JWT_SECRET_KEY']
+app.secret_key = environ.get("SECRET_KEY")
 
 api = Api(app)
 
@@ -46,7 +47,7 @@ jwt = JWTManager(app)
 @jwt.additional_claims_loader
 def add_claims_to_jwt(identity):
     if identity == 1:                   # use other, read from .env / decide if remove, use /login resource instead
-        return {"is_admin": True}
+        return {"is_admin": True}       # TODO: REPLACE
     else:
         return {"is_admin": False}
 
@@ -107,5 +108,5 @@ api.add_resource(Practice, '/users/<string:username>/sets/<string:set_id>/practi
 
 if __name__ == '__main__':
     db.init_app(app)
-    app.run(port=7799, debug=environ.get("DEBUG"))      # TODO: set debug false
+    app.run(port=7799, debug=environ.get("DEBUG"))
 

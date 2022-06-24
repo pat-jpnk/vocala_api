@@ -2,3 +2,32 @@ upgrade flask-jwt-extended notes ('https://flask-jwt-extended.readthedocs.io/en/
 
 https://stackoverflow.com/questions/62688256/sqlalchemy-exc-nosuchmoduleerror-cant-load-plugin-sqlalchemy-dialectspostgre
 
+pytest testing https://flask.palletsprojects.com/en/2.1.x/testing/
+
+
+
+____________________________________________________________________________________________________-
+
+
+- implement put 
+
+- add user convinience functions (email, pw change)
+
+- add sorting, filtering, pagination for e.g. vocab
+
+- implement basic endpoints 
+
+- implement /practice endpoint
+
+- upload user pictures 
+
+- add login with github
+
+
+_________________________________________________________________________________________________________
+
+
+- SQL:
+
+    - add profile pic url
+    - add profile data

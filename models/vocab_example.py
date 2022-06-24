@@ -3,8 +3,8 @@ from db import db
 
 class VocabExampleModel(db.Model):
     
-    __tablename__ = 'vc_usage_examples'         ## pg table name
-
+    __tablename__ = 'vc_usage_examples'         
+    
     id = db.Column(db.Integer, primary_key=True)
     example = db.Column(db.String)
     vocab_id = db.Column(db.Integer, db.ForeignKey("vc_vocabularies.id"))

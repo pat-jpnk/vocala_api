@@ -1,11 +1,9 @@
 from db import db
 from models.set import SetModel
 
-# TODO: add all relationships
-
 class UserModel(db.Model):
 
-    __tablename__ = 'vc_users'         ## pg table name
+    __tablename__ = 'vc_users'        
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80))                      # change to sensible value
@@ -46,4 +44,3 @@ class UserModel(db.Model):
     @classmethod
     def find_all(cls):
         return cls.query.all()
-       # return db.session.query.all()

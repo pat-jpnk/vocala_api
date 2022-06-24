@@ -1,4 +1,5 @@
 from db import db
+from datetime import date
 
 class VocabModel(db.Model):
     
@@ -35,3 +36,6 @@ class VocabModel(db.Model):
         db.session.commit()
 
     
+    @classmethod
+    def find_practice(cls, set_id):
+        return cls.query.filter_by(set_id=set_id).filter(cls.next_date <= date.today()).limit(10).all()
