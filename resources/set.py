@@ -1,4 +1,3 @@
-import string
 from flask import jsonify
 from flask_restful import Resource, reqparse
 from models.user import UserModel
@@ -14,33 +13,54 @@ class Sets(Resource):
     parser = reqparse.RequestParser()
 
     parser.add_argument('setname',
-                        type=string,
+                        type=str,
                         required=True,
                         help="required field"       
     )
 
     parser.add_argument('user_id',
-                        type=string,
+                        type=str,
                         required=True,
                         help="required field"       
     )
 
     def get(self, username):
-        
         user_id = UserModel.find_id_by_name(username)
 
         if user_id:
-            return {"sets": [x.json() for x in SetModel.find_by_user_id(user_id)]} 
+            set = SetModel.find_by_user_id(user_id[0])
+            return {"sets": [x.json() for x in SetModel.find_by_user_id(user_id[0])]}
+        else:
+            return {"message": "User does not exist"}, 404
+
+
+        print(";MMMMMMMM: ", user_id)
+
+        return None
+        
+        '''
+        user_id = UserModel.find_id_by_name(username)
+
+        if user_id:
+            print("MMMMM: ", SetModel.find_by_user_id(user_id))
+
+            print()
+           # m =  {"sets": [x.json() for x in SetModel.find_by_user_id(user_id)]} 
+            
+            return {"message": "dddd"}, 200
 
         else: 
             return {"message": "User does not exist"}, 404
 
-    @jwt_required
+        '''
+
+
+    @jwt_required()
     def post(self, username):
         
         data = Sets.parser.parse_args()
         if not SetModel.find_by_setname(data['setname']): 
-            if not UserModel.find_by_username(username):
+            if UserModel.find_by_username(username):
                 set = SetModel(data['setname'], data['user_id'])
                 
                 try:
@@ -60,13 +80,14 @@ class Sets(Resource):
 
 class Set(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('set_id',
-                        type=string,
+
+    parser.add_argument('setname',
+                        type=str,
                         required=True,
                         help="required field"       
     )
 
-    @jwt_required
+    @jwt_required()
     def get(self, username, set_id):
         user_id = UserModel.find_id_by_name(username)
 
@@ -79,10 +100,14 @@ class Set(Resource):
         else:
             return {"message": "User does not exist"}, 404
 
-    @jwt_required
+    @jwt_required()
     def put(self, username, set_id):
-        pass                                # TODO: implement
+        #user_id = UserModel.find_id_by_name(username)
 
+        #if user_id:
+        
+        pass
+    
     @jwt_required(fresh=True)
     def delete(self, username, set_id):
         user_id = UserModel.find_id_by_name(username)

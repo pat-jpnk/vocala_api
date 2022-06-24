@@ -10,7 +10,7 @@ from models.vocab_example import VocabExampleModel
 
 from flask import Flask, jsonify
 from flask_restful import Api
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, get_jwt
 from db import db
 from blocklist import BLOCKLIST
 from dotenv import load_dotenv
@@ -48,9 +48,8 @@ def add_claims_to_jwt(identity):
     else:
         return {"is_admin": False}
 
-@jwt.token_in_blocklist_loader
-def check_blocklist(decryped_token):
-    return decryped_token['jti'] in BLOCKLIST
+def token_in_blocklist(decrypted_token):
+    return decrypted_token['jti'] in BLOCKLIST
 
 # invalid token sent
 @jwt.invalid_token_loader

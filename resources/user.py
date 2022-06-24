@@ -1,6 +1,6 @@
-import string
 from flask import jsonify
 from flask_restful import Resource, reqparse
+from numpy import identity
 from models.user import UserModel
 from models.set import SetModel
 from flask_jwt_extended import (
@@ -11,7 +11,6 @@ from flask_jwt_extended import (
     get_jwt
 )
 
-import string
 from hmac import compare_digest
 from blocklist import BLOCKLIST
 
@@ -38,18 +37,20 @@ class UserLogout(Resource):
 class UserLogin(Resource):
     parser = reqparse.RequestParser()
 
+    
     parser.add_argument('username',
-                        type=string,
+                        type=str,
                         required=True,
                         help="required field"       
     )
 
     parser.add_argument('password',
-                        type=string,
+                        type=str,
                         required=True,
                         help="required field"       
     )
 
+    
     @classmethod
     def post(cls):
         # get data from parser
@@ -58,7 +59,7 @@ class UserLogin(Resource):
         user = UserModel.find_by_username(data['username'])
         # check password -> create access token
         if user and compare_digest(user.password,data['password']):
-            access_token = create_access_token(sub=user.id, fresh=True)
+            access_token = create_access_token(identity=user.id, fresh=True)
             refresh_token = create_refresh_token(user.id)
             return {"access_token": access_token, "refresh_token": refresh_token}
         else:
@@ -71,20 +72,23 @@ class Users(Resource):
 
     parser = reqparse.RequestParser()
 
+    
     parser.add_argument('username',
-                        type=string,
+                        type=str,
                         required=True,
                         help="required field"       
     )
+    
 
+    
     parser.add_argument('password',
-                        type=string,
+                        type=str,
                         required=True,
                         help="required field"       
     )
 
     parser.add_argument('email',
-                        type=string,
+                        type=str,
                         required=True,
                         help="required field"       
     )
@@ -110,7 +114,8 @@ class Users(Resource):
 
         try:
             user.save()
-        except:
+        except Exception as e:
+            print("EXCEPTION: ", e)
             return {"message": "Internal error during insertion"}, 500
         
         return user.json(), 201
@@ -128,7 +133,7 @@ class User(Resource):
             return {"message": 'User not found'}, 404
 
 
-    @jwt_required
+    @jwt_required()
     def delete(self, username):
         if not UserModel.find_by_username(username):
             return {"message": "User does not exists"}
@@ -142,7 +147,7 @@ class User(Resource):
 
         return user.json()
 
-    @jwt_required
+    @jwt_required()
     def put(self, username):
         pass                   # TODO: implement
 
@@ -150,7 +155,7 @@ class User(Resource):
 # /admin
 
 class Admin(Resource):
-    @jwt_required
+    @jwt_required()
     def get(self):
         claims = get_jwt()
         if not claims['is_admin']:
