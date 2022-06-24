@@ -1,7 +1,6 @@
 '''
 Vocala api 0.1
 '''
-# TODO: decide where to require fresh token 
 from os import environ
 
 from models.user import UserModel
@@ -28,8 +27,6 @@ load_dotenv(".env")
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get("DATABASE_URI")     # TODO: change
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False    # turn off flask sqlalchemy modification tracker, leave sqlalchemy modification tracker on
 app.config['PROPAGATE_EXCEPTIONS'] = True # provide  better error codes from flask extensions
-app.config['JWT_BLACKLIST_ENABLE'] = True
-app.config['JWT_BLOCKLIST_TOKEN_CHECKS'] = ['access','refresh']
 
 app.secret_key = environ.get("SECRET_KEY")
 

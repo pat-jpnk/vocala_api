@@ -37,7 +37,7 @@ class Practice(Resource):
         data = Practice.parser.parse_args()
 
 
-        return {"message": "Practice complete"}
+        return {"message": "Practice complete"}, 200
         '''
                 {"practice": [
             {
