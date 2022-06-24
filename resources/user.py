@@ -1,5 +1,6 @@
 import imp
 import string
+from flask import jsonify
 from flask_restful import Resource, reqparse
 from models.user import UserModel
 from models.set import SetModel
@@ -88,9 +89,10 @@ class Users(Resource):
     )
 
 
-    @jwt_required
+   # @jwt_required
     def get(self):
-        return {"users": [x.json() for x in UserModel.find_all()]}
+        return jsonify({"users": [x.json() for x in UserModel.find_all()]})
+        #return jsonify(UserModel.find_all())
 
     @jwt_required(fresh=True)
     def delete(self):

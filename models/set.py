@@ -8,8 +8,8 @@ class SetModel(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("vc_users.id"))
     setname = db.Column(db.String(50))                   # change to sensible value
 
-    user = db.relationship("UserModel", back_populates="vc_sets")
-    vocab = db.relationship("VocabModel", back_populates="vc_sets")
+    #user = db.relationship("UserModel", back_populates="vc_sets")
+    vocab = db.relationship("VocabModel", backref="set")
 
 
     def __init__(self, setname, user_id):

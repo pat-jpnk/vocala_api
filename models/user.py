@@ -12,7 +12,7 @@ class UserModel(db.Model):
     password = db.Column(db.String(80))
     email = db.Column(db.String(80))
     
-    sets = db.relationship("SetModel", order_by=SetModel.id, back_populates="vc_users")
+    sets = db.relationship("SetModel", backref="user")
 
 
     def __init__(self, username, password, email):
@@ -45,4 +45,5 @@ class UserModel(db.Model):
 
     @classmethod
     def find_all(cls):
-        return cls.query().all()
+        return cls.query.all()
+       # return db.session.query.all()

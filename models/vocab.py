@@ -12,7 +12,7 @@ class VocabModel(db.Model):
     level = db.Column(db.Integer)
     description = db.Column(db.String(50), nullable=True)
     
-    examples = db.relationship("VocabExampleModel", back_populates="vc_vocabularies")
+    examples = db.relationship("VocabExampleModel", backref="vocab")
 
     def __init__(self, native, foreign, set_id, description):
         self.native = native

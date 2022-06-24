@@ -1,1 +1,4 @@
 upgrade flask-jwt-extended notes ('https://flask-jwt-extended.readthedocs.io/en/stable/v4_upgrade_guide/')
+
+https://stackoverflow.com/questions/62688256/sqlalchemy-exc-nosuchmoduleerror-cant-load-plugin-sqlalchemy-dialectspostgre
+

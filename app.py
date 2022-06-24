@@ -5,18 +5,25 @@ Vocala api 0.1
 # TODO: decide where to require fresh token 
 from os import environ
 
-from xmlrpc.client import TRANSPORT_ERROR
+from models.user import UserModel
+from models.set import SetModel
+from models.vocab import VocabModel
+from models.vocab_example import VocabExampleModel
+
 from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
-from psycopg2 import DATETIME
 from db import db
 from blocklist import BLOCKLIST
+
+from dotenv import load_dotenv
 
 from resources.user import RefreshToken, SetVocab, User, UserLogin, UserLogout, Users, Sets, Set, Practice
 
 
 app = Flask(__name__)
+load_dotenv(".env")
+
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get("DATABASE_URI")     # TODO: change
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False    # turn off flask sqlalchemy modification tracker, leave sqlalchemy modification tracker on
 app.config['PROPAGATE_EXCEPTIONS'] = True # provide  better error codes from flask extensions
@@ -99,6 +106,6 @@ api.add_resource(Practice, '/users/<string:username>/sets/<string:set_id>/practi
 
 
 if __name__ == '__main__':
- #   db.init_app(app)
+    db.init_app(app)
     app.run(port=7799, debug=environ.get("DEBUG"))      # TODO: set debug false
 
