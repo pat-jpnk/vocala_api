@@ -1,9 +1,63 @@
+import imp
 import string
-from telnetlib import SE
 from flask_restful import Resource, reqparse
 from models.user import UserModel
 from models.set import SetModel
-from flask_jwt import jwt_required
+from flask_jwt_extended import  create_access_token, create_refresh_token, jwt_required, get_jwt_claims, jwt_optional, get_jwt_identity, jwt_refresh_token_required, fresh_jwt_required, get_raw_jwt
+
+from hmac import compare_digest
+
+from blocklist import BLOCKLIST
+
+
+'''
+
+jwt flow:
+
+"fresh token" => "refreshed token" => new "fresh token" (pw entry) | new "refresh token" (jwt token refreshed)
+
+'''
+
+
+class UserLogout(Resource):
+    @jwt_required
+    def post(self):
+        jti = get_raw_jwt()['jti']              # jwt id = jti
+        BLOCKLIST.add(jti)
+        return {"message": "logged out"}, 200
+
+
+# /login 
+
+class UserLogin(Resource):
+    parser = reqparse.RequestParser()
+
+    parser.add_argument('username',
+                        type=string,
+                        required=True,
+                        help="required field"       
+    )
+
+    parser.add_argument('password',
+                        type=string,
+                        required=True,
+                        help="required field"       
+    )
+
+    @classmethod
+    def post(cls):
+        # get data from parser
+        data = cls.parser.parse_args()
+        # find user
+        user = UserModel.find_by_username(data['username'])
+        # check password -> create access token
+        if user and compare_digest(user.password,data['password']):
+            access_token = create_access_token(identity=user.id, fresh=True)
+            refresh_token = create_refresh_token(user.id)
+            return {"access_token": access_token, "refresh_token": refresh_token}
+        else:
+            return {"message": "Invalid Credentials"}, 401
+
 
 # /users
 
@@ -34,8 +88,12 @@ class Users(Resource):
     def get(self):
         return {"users": [x.json() for x in UserModel.find_all()]}
 
+    @fresh_jwt_required
     def post(self):
-        data = User.parser.parse_args()
+        pass            # TODO: implement
+
+    def post(self):
+        data = self.parser.parse_args()
 
         if UserModel.find_by_username(data['username']):
             return {"message": "A User with name '{}' already exists".format(data['username'])}, 400
@@ -50,6 +108,7 @@ class Users(Resource):
             return {"message": "Internal error during insertion"}, 500
         
         return user.json(), 201
+
 
 # /users/<name>
 
@@ -68,7 +127,7 @@ class User(Resource):
         if not UserModel.find_by_username(username):
             return {"message": "User does not exists"}
         else:
-            user = UserModel.find_by_username(username)   # duplicate
+            user = UserModel.find_by_username(username)   # duplicate TODO: fix
 
             try:
                 user.delete()
@@ -78,7 +137,7 @@ class User(Resource):
         return user.json()
 
     @jwt_required
-    def put(self. username):
+    def put(self, username):
         pass                   # TODO: implement
 
 # /users/<name>/sets
@@ -100,6 +159,7 @@ class Sets(Resource):
     )
 
     def get(self, username):
+        
         user_id = UserModel.find_id_by_name(username)
 
         if user_id:
@@ -179,3 +239,22 @@ class Practice(Resource):
     @jwt_required
     def get(self, id):
         pass                          # TODO: implement
+
+# /admin
+
+class Admin(Resource):
+    @jwt_required
+    def get(self):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {"message": "Not allowed"}, 401
+        return {"data": 13454}
+
+# return error when no token is provided 
+
+class RefreshToken(Resource):
+    @jwt_refresh_token_required
+    def post(self):
+        user = get_jwt_identity()
+        new_token = create_access_token(identity=user, fresh=False)
+        return {'access_token': new_token}, 200

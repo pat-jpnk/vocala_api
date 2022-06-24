@@ -2,21 +2,27 @@
 Vocala api 0.1
 '''
 
-from flask import Flask
-from flask_restful import Api
-from flask_jwt import JWT, jwt_required 
-from db import db
+# TODO: decide where to require fresh token 
 
-from security import authenticate, identity
-from resources.user import User, Users, Sets, Set, Practice
+from xmlrpc.client import TRANSPORT_ERROR
+from flask import Flask, jsonify
+from flask_restful import Api
+from flask_jwt_extended import JWTManager
+from db import db
+from blocklist import BLOCKLIST
+
+from resources.user import RefreshToken, User, UserLogin, UserLogout, Users, Sets, Set, Practice
 
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres:://aws-example.com'       # TODO: change
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False    # turn off flask sqlalchemy modification tracker, leave sqlalchemy modification tracker on
 app.config['PROPAGATE_EXCEPTIONS'] = True # provide  better error codes from flask extensions
+app.config['JWT_BLACKLIST_ENABLE'] = True
+app.config['JWT_BLOCKLIST_TOKEN_CHECKS'] = ['access','refresh']
 
-app.secret_key = "ABCDEFG"
+app.secret_key = "ABCDEFG"   # app.config['JWT_SECRET_KEY']
+
 api = Api(app)
 
 '''
@@ -26,11 +32,63 @@ def create_tables():
     db.create_all()
 '''
 
-jwt = JWT(app, authenticate, identity)
+jwt = JWTManager(app)
+
+
+@jwt.user_claims_loader
+def add_claims_to_jwt(identity):
+    if identity == 1:                   # use other, read from .env / decide if remove, use /login resource instead
+        return {"is_admin": True}
+    else:
+        return {"is_admin": False}
+
+@jwt.token_in_blocklist_loader
+def check_blocklist(decryped_token):
+    return decryped_token['jti'] in BLOCKLIST
+
+# invalid token sent
+@jwt.invalid_token_loader
+def invalid_token_callback():
+    return jsonify({
+        "message": "token invalid"
+    }), 401
+
+# expired token sent
+@jwt.expired_token_loader
+def expired_token_callback():
+    return jsonify({
+        "message": "token expired"
+    }), 401
+
+
+# no token sent
+@jwt.unauthorized_loader
+def unauthorized_token_callback():
+    return jsonify({
+        "message": "no token received"
+    }), 401
+
+# non fresh token sent, fresh token required
+@jwt.needs_fresh_token_loader
+def fresh_token_callback():
+    return jsonify({
+        "message": "fresh token required"
+    }), 401
+
+# logout user
+@jwt.revoked_token_loader
+def revoked_token_callback():
+    return jsonify({
+        "message": "revoked token received"
+    }), 401
+
 
 
 # ------ API resources ------
 
+api.add_resource(RefreshToken, '/refresh')
+api.add_resource(UserLogout, '/logout')
+api.add_resource(UserLogin, '/login')
 api.add_resource(Users, '/users')
 api.add_resource(User, '/users/<string:username>')
 api.add_resource(Sets, '/users/<string:username>/sets')

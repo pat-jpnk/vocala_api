@@ -1,4 +1,5 @@
 
+POST /login
 
 POST /users
 GET /users                       
@@ -15,4 +16,14 @@ DELETE /users/<username>/sets/<id>
 PUT /users/<username>/sets/<id>   
 
 GET /users/<username>/sets/<id>/practice
+
+
+POST /users/<username>/sets/<id>/vocab          !!!!
+
+GET /users/<username>/sets/<id>/vocab/<id>      !!!!
+PUT /users/<username>/sets/<id>/vocab/<id>      !!!!
+DELETE /users/<username>/sets/<id>/vocab/<id>   !!!!
+
+
+
 
