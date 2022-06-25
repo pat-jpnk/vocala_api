@@ -1,4 +1,3 @@
-from psycopg2 import Timestamp
 from datetime import datetime
 from db import db
 from models.set import SetModel

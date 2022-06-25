@@ -18,11 +18,11 @@ PUT /users/<username>/sets/<id>
 GET /users/<username>/sets/<id>/practice
 
 
-POST /users/<username>/sets/<id>/vocab          !!!!
+POST /users/<username>/sets/<id>/vocab          
 
-GET /users/<username>/sets/<id>/vocab/<id>      !!!!
-PUT /users/<username>/sets/<id>/vocab/<id>      !!!!
-DELETE /users/<username>/sets/<id>/vocab/<id>   !!!!
+GET /users/<username>/sets/<id>/vocab/<id>     
+PUT /users/<username>/sets/<id>/vocab/<id>      
+DELETE /users/<username>/sets/<id>/vocab/<id>  
 
 
 

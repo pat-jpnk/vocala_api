@@ -3,6 +3,7 @@ Vocala api 0.1
 '''
 from os import environ
 
+# imports prevent sqlalchemy error
 from models.user import UserModel
 from models.set import SetModel
 from models.vocab import VocabModel
@@ -18,7 +19,7 @@ from dotenv import load_dotenv
 from resources.user import RefreshToken, User, UserLogin, UserLogout, Users, Admin
 from resources.practice import Practice
 from resources.set import Sets, Set
-from resources.vocab import SetVocab
+from resources.vocab import SetVocab, Vocab
 
 
 app = Flask(__name__)
@@ -100,6 +101,7 @@ api.add_resource(Sets, '/users/<string:username>/sets')
 api.add_resource(Set, '/users/<string:username>/sets/<string:set_id>')
 api.add_resource(SetVocab, '/users/<string:username>/sets/<string:set_id>/vocab')
 api.add_resource(Practice, '/users/<string:username>/sets/<string:set_id>/practice')
+api.add_resource(Vocab, '/users/<string:username>/sets/<string:set_id>/vocab/<string:vocab_id>')
 
 
 if __name__ == '__main__':

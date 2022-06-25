@@ -6,12 +6,12 @@ from flask_jwt_extended import (
     jwt_required
 )
 
-# /users/<name>/sets/<string:id/vocab
+# /users/<string:username>/sets/<string:set_id>/vocab'
 
 # TODO: paginate, filter, sort
 
 class SetVocab(Resource):
-    @jwt_required
+    @jwt_required()
     def get(self, username, set_id):
         user_id = UserModel.find_id_by_name(username)
 
@@ -24,3 +24,22 @@ class SetVocab(Resource):
         else:
             return {"message": "User does not exist"}, 404
 
+    @jwt_required()
+    def post(self, username, set_id):
+        pass
+
+
+# /users/<string:username>/sets/<string:set_id>/vocab/<string:vocab_id>
+
+class Vocab(Resource):
+    @jwt_required()
+    def put(self, username, set_id, vocab_id):
+        pass
+
+    @jwt_required()
+    def delete(self, username, set_id, vocab_id):
+        pass
+    
+    @jwt_required()
+    def get(self, username, set_id, vocab_id):
+        pass

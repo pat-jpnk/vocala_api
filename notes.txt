@@ -4,7 +4,7 @@ https://stackoverflow.com/questions/62688256/sqlalchemy-exc-nosuchmoduleerror-ca
 
 pytest testing https://flask.palletsprojects.com/en/2.1.x/testing/
 
-
+https://stackabuse.com/encoding-and-decoding-base64-strings-in-python/
 
 ____________________________________________________________________________________________________-
 
@@ -25,6 +25,13 @@ ________________________________________________________________________________
 
 - use jwt claims to separate user resources
 
+- hash + salt password 
+
+- implement crockford32 identifiers
+
+- change blocklist set for k/v store
+
+- decide whether to make sets/vocabs private
 _________________________________________________________________________________________________________
 
 
@@ -35,6 +42,7 @@ ________________________________________________________________________________
     - add set language field
 
 
+    - add crockford32 identifiers to set and vocab
 __________________________________________________________________________________________________________
 
 

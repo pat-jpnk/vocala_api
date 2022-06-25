@@ -27,7 +27,7 @@ jwt flow:
 class UserLogout(Resource):
     @jwt_required
     def post(self):
-        jti = get_jwt()['jti']              # jwt id = jti
+        jti = get_jwt()['jti']        
         BLOCKLIST.add(jti)
         return {"message": "logged out"}, 200
 
@@ -115,7 +115,7 @@ class Users(Resource):
         try:
             user.save()
         except Exception as e:
-            print("EXCEPTION: ", e)
+            print("EXCEPTION: ", e)                                          # TODO: remove
             return {"message": "Internal error during insertion"}, 500
         
         return user.json(), 201

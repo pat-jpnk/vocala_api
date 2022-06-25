@@ -37,7 +37,7 @@ class SetModel(db.Model):
 
     @classmethod
     def find_by_id(cls, set_id):
-        return cls.query.filter_by(id=set_id).first(); # add crockford32 ID         ## add identifier field to SET ? 
+        return cls.query.filter_by(id=set_id).first();
 
     @classmethod
     def user_has_set(cls, set_id, user_id):

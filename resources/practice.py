@@ -14,7 +14,7 @@ from models.vocab import VocabModel
 class Practice(Resource):
     parser = reqparse.RequestParser()
 
-    @jwt_required
+    @jwt_required()
     def get(self, username, set_id):
         user_id = UserModel.find_id_by_name(username)
 
@@ -28,7 +28,7 @@ class Practice(Resource):
         else: 
             return {"message": "User does not exist"}, 404
     
-    @jwt_required
+    @jwt_required()
     def post(self, id):
         # receive practice outcome (vocabulary) (success | failure) (small mistake | big mistake)
         # process outcome, change level and next_date values
